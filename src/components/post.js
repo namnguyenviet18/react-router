@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 function Posts() {
     return (
         <div style={{ padding: 20 }}>
