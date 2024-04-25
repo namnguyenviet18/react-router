@@ -9,18 +9,21 @@ import PostDetails from './post_details';
 import Stats from './stats';
 import Login from './login';
 import NoMatch from './no_match';
+import ProtectedRoute from './ProtectRoute';
+import NewPost from './new_post/NewPost';
 function AppLayout() {
     const [user, setUser] = useState();
     const navigate = useNavigate();
     function logOut() {
         setUser(null);
-        navigate("/");
+        navigate("/newpost");
     }
     return (
         <div>
             <nav style={{ margin: 10 }}>
                 <Link to="/" style={{ padding: 5 }}> Home </Link>
                 <Link to="/posts" style={{ padding: 5 }}> Posts </Link>
+                <Link to="/newpost" style={{ padding: 5 }}>Create Post</Link>
                 <Link to="/about" style={{ padding: 5 }}> About </Link>
                 <span> | </span>
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
@@ -35,7 +38,10 @@ function AppLayout() {
                 </Route>
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login onLogin={setUser} />} />
-                <Route path="/stats" element={<Stats user={user} />} />
+
+                <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
+                <Route path="/newpost" element={<ProtectedRoute
+                    user={user}><NewPost /></ProtectedRoute>} />
                 <Route path="*" element={<NoMatch />} />
             </Routes>
         </div>);

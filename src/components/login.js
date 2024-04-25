@@ -2,15 +2,44 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 function Login({ onLogin }) {
-    console.log('zô login');
     const [creds, setCreds] = useState({});
+    const [error, setError] = useState("");
     const navigate = useNavigate();
     function handleLogin() {
-        // For demonstration purposes only.
-        if (creds.username === 'admin' && creds.password === '123') {
-            onLogin && onLogin({ username: creds.username });
-            navigate('/stats');
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    'http://localhost:8080/api/auth/login',
+                    {
+                        headers: {
+                            'Accept': 'application /json',
+                            'Content-Type': 'application/json'
+                        },
+                        method: "POST",
+                        body: JSON.stringify(creds),
+                    }
+                );
+
+                if (response.ok) {
+                    const json = await response.json();
+                    console.log(json.msg);
+                    if (json.status) {
+                        onLogin && onLogin({ username: creds.username });
+                        navigate('/stats');
+                    } else {
+                        setError("Invalid usename or password");
+                    }
+
+                } else {
+                    setError("Invalid usename or password");
+                }
+                console.log(response);
+            } catch (error) {
+                console.error("Login error:", error);
+                setError("Login failed!");
+            }
         }
+        fetchData();
     }
 
 
@@ -26,7 +55,10 @@ function Login({ onLogin }) {
                 ...creds, password:
                     e.target.value
             })} /><br /><br />
-            <button onClick={handleLogin}>Login</button> </div>
+            <button onClick={handleLogin}>Login</button>
+            <p style={{ color: 'red' }}>{error}</p>
+        </div>
+
     );
 }
 
